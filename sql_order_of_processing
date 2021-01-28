@@ -1,0 +1,31 @@
+
+
+select *
+from (select c.A2 ,a.account_id, count(trans_id) as count, rank() over(partition by c.A2 order by count(trans_id)desc) as Ranks
+from trans as a
+join account as b
+on a.account_id = b.account_id
+join district as c
+on b.district_id = c.A1
+where A3 = 'central Bohemia'
+group by a.account_id, c.A2)sub1
+where Ranks = 1;
+
+select * from 
+(
+select *, rank() over (partition by A2 order by counts desc) as Ranks 
+from (
+select c.A2 ,a.account_id, count(a.trans_id) as counts
+from 
+trans as a
+join account as b
+on a.account_id = b.account_id
+join district as c
+on b.district_id = c.A1
+where c.A3 = 'central Bohemia'
+group by c.A2 ,a.account_id
+order by c.A2
+)sub
+)sub2
+where Ranks=1;
+
